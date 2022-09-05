@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const objectId = mongoose.Schema.Types.ObjectId
+const ObjectId = mongoose.Schema.Types.ObjectId
 
 const blogSchema = new mongoose.Schema({
     title: {
@@ -11,8 +11,8 @@ const blogSchema = new mongoose.Schema({
         required: true
     },
     authorId:{
-        type: objectId,
-        ref: "Author",
+        type: ObjectId,
+        ref:'Author',
         required:true,
     },
     tags: { type:[String] 
