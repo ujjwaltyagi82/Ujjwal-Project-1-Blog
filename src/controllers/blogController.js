@@ -1,5 +1,5 @@
 const BlogModel = require('../models/blogModel')
-const AuthorModel= require('../models/authorModel')
+const AuthorModel = require('../models/authorModel')
 
 const createBlog = async function (req, res) {
     try {
@@ -13,7 +13,7 @@ const createBlog = async function (req, res) {
     }
     catch (err) {
         console.log("The error is ==>", err)
-        res.status(500).send({ status: false, error: err.message })
+        return res.status(500).send({ status: false, error: err.message })
     }
 }
 
@@ -22,15 +22,15 @@ const getBlogs = async function (req, res) {
         let data = req.query // yahaper n agar humne kuch nhi diya query main to wo empty object lega jiski truthy falsy value true hoti hain isliye wo direct requireblogs main ja raha 
         if (Object.keys(data).lenght !== 0) // magar hume all blogs chahiye isliye humne pahile object.keys se data ko array main convert kiya jisase hum uski lenght check kr rhe hain agar uski lenght 0 hogi to wo getblogs main jayega 
         {
-            const requireblogs = await BlogModel.find(data).populate('Author')
-            res.status(200).send({ msg: "Require Blogs", status: true, data: requireblogs })
+            const requireblogs = await BlogModel.find(data).populate('authorId')
+            return  res.status(200).send({ msg: "Require Blogs", status: true, data: requireblogs })
         }
-        let getblogs = await BlogModel.find().populate('Author')
-        res.status(200).send({ msg: "All Blogs", status: true, data: getblogs })
+        let getblogs = await BlogModel.find().populate('authorId')
+        return res.status(200).send({ msg: "All Blogs", status: true, data: getblogs })
     }
     catch (err) {
         console.log("The error is ==>", err)
-        res.status(500).send({ status: false, error: err.message })
+        return res.status(500).send({ status: false, error: err.message })
     }
 }
 
