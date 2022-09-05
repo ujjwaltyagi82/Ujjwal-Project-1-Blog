@@ -21,8 +21,8 @@ const getBlogs = async function (req, res) {
     try {
         let data = req.query
         if (Object.keys(data).lenght !== 0) {
-            let data = req.query // yahaper n agar humne kuch nhi diya query main to wo empty object lega jiski truthy falsy value true hoti hain isliye wo direct requireblogs main ja raha 
-            if (Object.keys(data).lenght !== 0) // magar hume all blogs chahiye isliye humne pahile object.keys se data ko array main convert kiya jisase hum uski lenght check kr rhe hain agar uski lenght 0 hogi to wo getblogs main jayega 
+            let data = req.query
+            if (Object.keys(data).lenght !== 0)
             {
                 const requireblogs = await BlogModel.find(data).populate('authorId')
                 return res.status(200).send({ msg: "Require Blogs", status: true, data: requireblogs })
