@@ -96,10 +96,34 @@ const delteBlogs = async function (req, res) {
 }
 
 
+const deletedbyparam = async function(req, res)
+{
+    try{
+    let data =  req.query
+    //if(!(data)) res.status(400).send({ status: false, msg: "Bad Request" })
+    if (Object.keys(data).lenght === 0) return res.status(400).send({status: false, msg: "Bad request"})
+    let deleteblogsbyparam = await BlogModel.findOneAndUpdate(
+        data,
+        {$set:{ isDeleted:true}},
+        {new:true}
+    )
+    return res.status(200).send({msg:"Blog deleted successful", status: true})
+   
+    
+}
+catch (err) {
+    console.log("The error is ==>", err)
+    return res.status(500).send({ status: false, error: err.message })
+}
+}
+
+
+
 
 module.exports.createBlog = createBlog
 module.exports.getBlogs = getBlogs
 module.exports.updateBlogs = updateBlogs
 module.exports.delteBlogs = delteBlogs
+module.exports.deletedbyparam = deletedbyparam
 
 
