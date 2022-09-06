@@ -72,9 +72,22 @@ const updateBlogs = async function (req, res) {
 }
 
 
-const delteblogs = async function (req, res) {
-    try {
-        
+const delteBlogs = async function (req, res) {
+    try { 
+        let blogId = req.params.blogId
+        if (!blogId) {
+            return res.status(404).send({ status: false, msg: "NOT FOUND" })
+        } else 
+        {
+        let isDeleted = await BlogModel.findById(blogId).select({ isDeleted: 1, _id: 0 })
+        if (isDeleted.isDeleted == true) { return res.status(404).send({ status: false, msg: "Already deleted" }) } 
+        let deleteblogs = await BlogModel.findByIdAndUpdate(
+            {_id: blogId},
+            {$set:{ isDeleted:true}},
+            {new:true}
+        )
+        return res.status(200).send({msg:"Blog deleted successful", status: true})
+    }
     }
     catch (err) {
         console.log("The error is ==>", err)
@@ -82,8 +95,11 @@ const delteblogs = async function (req, res) {
     }
 }
 
+
+
 module.exports.createBlog = createBlog
 module.exports.getBlogs = getBlogs
 module.exports.updateBlogs = updateBlogs
+module.exports.delteBlogs = delteBlogs
 
 
