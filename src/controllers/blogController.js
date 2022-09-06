@@ -43,15 +43,16 @@ const updateBlogs = async function (req, res) {
             res.status(404).send({ status: false, msg: "NOT FOUND" })
         } else {
             let data = req.body
-            if(!data){
+            if (!data) {
                 res.status(400).send({ status: false, msg: "BAD REQUEST" })
+            } else {
+                let allBooks = await BlogModel.updateMany(
+                    { _id: blogId },
+                    { $set: { data } },
+                    { new: true }
+                )
+                res.status(200).send({ status: true, msg: allBooks })
             }
-            let allBooks = await BlogModel.updateMany(
-                { _id: blogId },
-                { $set: { data } },
-                { new: true }
-            )
-            res.status(200).send({ status: true, msg: allBooks })
         }
     } catch (err) {
         console.log("The error is ==>", err)
