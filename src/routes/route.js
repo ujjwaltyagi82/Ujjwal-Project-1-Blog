@@ -14,5 +14,6 @@ router.get("/test-me", function (req, res) {
 router.post('/authors', AuthorController.createAuthor)
 router.post("/blogs", BlogController.createBlog)
 router.get('/blogs', BlogController.getBlogs)
+router.put('/blogs/:blogId', BlogController.updateBlogs)
 
 module.exports = router
