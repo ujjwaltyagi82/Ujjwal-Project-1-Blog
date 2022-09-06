@@ -21,8 +21,8 @@ const createBlog = async function (req, res) {
 const getBlogs = async function (req, res) {
     try {
         let data = req.query
-        if (Object.keys(data).lenght !== 0) {
-            const requireblogs = await BlogModel.find({ isDeleted: false, isPublished: true }).populate('authorId')
+        if (Object.keys(data).length !== 0) {
+            const requireblogs = await BlogModel.find({ isDeleted: false, isPublished: true }, data).populate('authorId')
             return res.status(200).send({ msg: "Require Blogs", status: true, data: requireblogs })
         }
         let getblogs = await BlogModel.find({ isDeleted: false, isPublished: true }).populate('authorId')
