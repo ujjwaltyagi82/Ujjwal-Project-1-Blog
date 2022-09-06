@@ -38,21 +38,72 @@ const getBlogs = async function (req, res) {
 
 const updateBlogs = async function (req, res) {
     try {
-        let blogId = req.params
+
+        let blogId = req.params.blogId
         if (!blogId) {
-            res.status(404).send({ status: false, msg: "NOT FOUND" })
+            return res.status(404).send({ status: false, msg: "NOT FOUND" })
         } else {
+            let isDeleted = await BlogModel.findById(blogId).select({ isDeleted: 1, _id: 0 })
+            if (isDeleted.isDeleted == true) { return res.status(404).send({ status: false, msg: "Blog not found" }) }
             let data = req.body
-            if (!data) {
-                res.status(400).send({ status: false, msg: "BAD REQUEST" })
-            } else {
-                let allBooks = await BlogModel.updateMany(
+            if ((data.publishedAt)) {
+                let publishedupdate = await BlogModel.findOneAndUpdate(
                     { _id: blogId },
-                    { $set: { data } },
+                    { $set: data },
                     { new: true }
                 )
-                res.status(200).send({ status: true, msg: allBooks })
+                return res.status(200).send({ status: true, msg: "Done", data: publishedupdate })
             }
+            if (!data) {
+                return res.status(400).send({ status: false, msg: "BAD REQUEST" })
+            } else {
+                let allBooks = await BlogModel.findByIdAndUpdate(
+                    { _id: blogId },
+                    { $set: data },
+                    { new: true }
+                )
+                return res.status(200).send({ status: true, msg: allBooks })
+            }
+        }
+    } catch (err) {
+        console.log("The error is ==>", err)
+        return res.status(500).send({ status: false, error: err.message })
+    }
+}
+
+const delteBlogsById = async function (req, res) {
+    try {
+        let blogId = req.params.blogId
+        if (!blogId) {
+            return res.status(404).send({ status: false, msg: "NOT FOUND" })
+        } else {
+            let isDeleted = await BlogModel.findById(blogId).select({ isDeleted: 1, _id: 0 })
+            if (isDeleted.isDeleted == true) { return res.status(404).send({ status: false, msg: "Already deleted" }) }
+            let deleteblogs = await BlogModel.findByIdAndUpdate(
+                { _id: blogId },
+                { $set: { isDeleted: true } },
+                { new: true }
+            )
+            return res.status(200).send({ msg: "Blog deleted successful", status: true })
+        }
+    }
+    catch (err) {
+        console.log("The error is ==>", err)
+        return res.status(500).send({ status: false, error: err.message })
+    }
+}
+
+const deleteBlogs = async function (req, res) {
+    try {
+        let data = req.query
+        if (Object.keys(data).length === 0) {
+            res.status(400).send({ status: false, msg: "No filter found to delete blogs" })
+        } else {
+            let blogsDeleted= await BlogModel.updateMany(
+                {data},
+                {$set: {isDeleted: true}}
+            )
+            return res.status(200).send({status: true, msg: "Blogs deleted successfully"})
         }
     } catch (err) {
         console.log("The error is ==>", err)
@@ -63,3 +114,5 @@ const updateBlogs = async function (req, res) {
 module.exports.createBlog = createBlog
 module.exports.getBlogs = getBlogs
 module.exports.updateBlogs = updateBlogs
+module.exports.delteBlogsById = delteBlogsById
+module.exports.deleteBlogs = deleteBlogs
