@@ -48,20 +48,21 @@ const updateBlogs = async function (req, res) {
             let check = await BlogModel.findById(blogId).select({ isDeleted: 1, _id: 0 })
             if (check.isDeleted == true) { return res.status(404).send({ status: false, msg: "Blog not found" }) }
             let data = req.body
-            if ((data.publishedAt)) {
-                let publishedupdate = await BlogModel.findOneAndUpdate(
-                    { _id: blogId },
-                    { $set: data },
-                    { new: true }
-                )
-                return res.status(200).send({ status: true, msg: "Done", data: publishedupdate })
-            }
+            // let updateData= data
+            // if ((data.publishedAt)) {
+            //     let publishedupdate = await BlogModel.findOneAndUpdate(
+            //         { _id: blogId },
+            //         { $set: data },
+            //         { new: true }
+            //     )
+            //     return res.status(200).send({ status: true, msg: "Done", data: publishedupdate })
+            // }
             if (!data) {
                 return res.status(400).send({ status: false, msg: "BAD REQUEST" })
             } else {
                 let allBooks = await BlogModel.findByIdAndUpdate(
                     { _id: blogId },
-                    { $set: data },
+                    { $set: {isPublished: true, publishedAt: Date.now()}, data },
                     { new: true }
                 )
                 return res.status(200).send({ status: true, msg: allBooks })
@@ -85,8 +86,7 @@ const deleteBlogsById = async function (req, res) {
             if (check.isDeleted == true) { return res.status(404).send({ status: false, msg: "Already deleted" }) }
             let deleteblogs = await BlogModel.findByIdAndUpdate(
                 { _id: blogId },
-                { $set: { isDeleted: true } },
-                { new: true }
+                { $set: { isDeleted: true, deletedAt: Date.now() } },
             )
             console.log(deleteblogs)
             return res.status(200).send({ msg: "Blog deleted successful", status: true })
@@ -108,7 +108,7 @@ const deleteBlogs = async function (req, res) {
         } else {
             let blogsDeleted = await BlogModel.updateMany(
                 { data },
-                { $set: { isDeleted: true } }
+                { $set: { isDeleted: true, deletedAt: Date.now() } }
             )
             console.log(blogsDeleted)
             return res.status(200).send({ status: true, msg: "Blogs deleted successfully" })
