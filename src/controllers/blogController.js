@@ -5,7 +5,7 @@ const AuthorModel = require('../models/authorModel')
 const createBlog = async function (req, res) {
     try {
         let data = req.body
-        if (!(data)) res.status(400).send({ status: false, msg: "Bad Request" })
+        if (!(data)) res.status(400).send({ status: false, msg: "Please enter Blog details" })
         let id = data.authorId
         let findid = await AuthorModel.findById(id)
         if (!(findid)) res.status(404).send({ status: false, msg: "Invalid authorId. Author Not Found " })
