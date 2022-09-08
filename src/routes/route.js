@@ -5,14 +5,8 @@ const BlogController= require('../controllers/blogController')
 const {authentication , authorisation} = require('../middlewares/middleware')
 
 
-router.get("/test-me", function (req, res) {
-    res.send("My first ever api!")
-})
-
-
-
 router.post('/authors', AuthorController.createAuthor)
-router.post("/blogs", authentication, BlogController.createBlog)
+router.post("/blogs", authentication , BlogController.createBlog)
 router.get('/blogs', authentication , BlogController.getBlogs)
 router.put('/blogs/:blogId',authentication , authorisation, BlogController.updateBlogs)
 router.delete('/blogs/:blogId',authentication , authorisation, BlogController.deleteBlogsById)

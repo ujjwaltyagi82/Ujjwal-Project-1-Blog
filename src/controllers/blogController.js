@@ -5,10 +5,29 @@ const AuthorModel = require('../models/authorModel')
 const createBlog = async function (req, res) {
     try {
         let data = req.body
-        if (!(data)) res.status(400).send({ status: false, msg: "Please enter Blog details" })
-        let id = data.authorId
-        let findid = await AuthorModel.findById(id)
-        if (!(findid)) res.status(404).send({ status: false, msg: "Invalid authorId. Author Not Found " })
+        let title = data.title
+        let body = data.body
+        let authorId = data.authorId
+        let category = data.category
+        if (Object.keys(data).length === 0){
+            return res.status(400).send({ status: false, msg: "Please enter Blog details" })
+        }
+        if(!title){
+            return res.status(400).send({ status: false, msg: "Please enter Title" })
+        }
+        if(!body){
+            return res.status(400).send({ status: false, msg: "Please enter Body" })
+        }
+        if(!authorId){
+            return res.status(400).send({ status: false, msg: "Please enter Author Id" })
+        }
+        if(!category){
+            return res.status(400).send({ status: false, msg: "Please enter Categoty" })
+        }
+        let findid = await AuthorModel.findById(authorId)
+        if (!(findid)){
+            return res.status(404).send({ status: false, msg: "Invalid authorId. Author Not Found " })
+        } 
         let savedData = await BlogModel.create(data)
         return res.status(201).send({ status: true, data: savedData })
     }
@@ -87,7 +106,6 @@ const deleteBlogsById = async function (req, res) {
         return res.status(500).send({ status: false, error: err.message })
     }
 }
-//-------------------------------------deletebyparam-----------------------------------------------------------
 
 //--------------------------------------------------------DELETE BLOGS--------------------------------------------------------------
 

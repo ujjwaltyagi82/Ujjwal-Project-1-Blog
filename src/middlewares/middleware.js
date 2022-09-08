@@ -4,15 +4,16 @@ const blogModel = require('../models/blogModel')
 const authentication = async function (req, res, next) {
     try {
         let token = req.headers["x-Api-Key"]
-        if (!(token)) token = req.headers["x-api-key"]
-        if (!(token)) return res.status(401).send({ status: false, msg: "Must enter token" })
+        if (!(token)){
+            token = req.headers["x-api-key"]
+        } 
+        if (!(token)) {
+            return res.status(401).send({ status: false, msg: "Must enter token" })
+        }
         let decodedtoken = jwt.verify(token, "projectgroup20-key")
-
         if (!(decodedtoken)) return res.status(401).send({ status: false, msg: "Invalid Token" })
         tokendecoded = decodedtoken.authorId
         console.log(tokendecoded)
-
-
         next()
     }
     catch (err) {
