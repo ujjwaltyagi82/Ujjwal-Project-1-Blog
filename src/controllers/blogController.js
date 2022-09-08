@@ -1,7 +1,7 @@
 const BlogModel = require('../models/blogModel')
 const AuthorModel = require('../models/authorModel')
 
-//-------------------------------------Blog PostApi-----------------------------------------------------------
+//---------------------------------------------------------Blog PostApi-----------------------------------------------------------
 const createBlog = async function (req, res) {
     try {
         let data = req.body
@@ -70,7 +70,7 @@ const deleteBlogsById = async function (req, res) {
     try {
         let blogId = req.params.blogId
         if (!blogId) {
-            return res.status(404).send({ status: false, msg: "NOT FOUND" })
+            return res.status(404).send({ status: false, msg: "PLEASE PROVIDE A VALID BLOG ID" })
         } else {
             let check = await BlogModel.findById(blogId).select({ isDeleted: 1, _id: 0 })
             if (check.isDeleted == true) { return res.status(404).send({ status: false, msg: "Already deleted" }) }

@@ -3,12 +3,12 @@ const blogModel = require('../models/blogModel')
 
 const authentication = async function (req, res, next) {
     try {
-        let token = req.headers["x-Api-key"]
+        let token = req.headers["x-Api-Key"]
         if (!(token)) token = req.headers["x-api-key"]
         if (!(token)) return res.status(401).send({ status: false, msg: "Must enter token" })
         let decodedtoken = jwt.verify(token, "projectgroup20-key")
         
-        if (!(decodedtoken)) return res.status(401).send({ status: false, msg: "Bad Request" })
+        if (!(decodedtoken)) return res.status(401).send({ status: false, msg: "Invalid Token" })
         tokendecoded = decodedtoken.authorId
         console.log(tokendecoded)
      
@@ -28,13 +28,14 @@ const authorisation = async function (req, res, next) {
         let blogId = req.params.blogId
         authorsId = req.query.authorId
         if(authorsId){
-            if (authorsId !==tokendecoded) { return res.status(403).send({ msg: "NOT AUTHENTICATED " }) }
+            if (authorsId !==tokendecoded) { return res.status(403).send({ msg: "NOT AUTHORIZED " }) }
             next()
         }
-        else{ let data = await blogModel.findById(blogId)
+        else{ 
+        let data = await blogModel.findById(blogId)
         let authorid = data.authorId.toString()
         console.log(authorid)
-        if (authorid !==tokendecoded) { return res.status(403).send({ msg: "NOT AUTHENTICATED " }) }
+        if (authorid !==tokendecoded) { return res.status(403).send({ msg: "NOT AUTHORIZED " }) }
         next()}
     }
     catch (err) {

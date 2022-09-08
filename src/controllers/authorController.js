@@ -29,13 +29,11 @@ const loginUser = async function (req, res) {
         "projectgroup20-key"
       );
       res.setHeader("x-api-key", token);
-      return res.status(201).send({ msg:"login is created", data: token });
+      return res.status(201).send({ msg:"login is created", token: token });
     }
     catch (err) { 
       return res.status(500).send( {msg :"Error" , error : err.message }) 
     }
-  
-   
   };
 
 module.exports.createAuthor = createAuthor
