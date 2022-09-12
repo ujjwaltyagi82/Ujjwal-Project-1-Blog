@@ -12,7 +12,6 @@ const stringChecking = function (data) {
   }
 }
 
-
 const createAuthor = async function (req, res) {
   try {
     let data = req.body

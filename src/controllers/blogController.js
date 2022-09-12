@@ -217,25 +217,25 @@ const deleteBlogs = async function (req, res) {
             const filter = {}
             if (subcategory) {
                 if (!arrayOfStringChecking(subcategory)) {
-                    return res.status(404).send({ status: false, msg: "subcategory must be present and have Non empty string " })
+                    return res.status(400).send({ status: false, msg: "subcategory must be present and have Non empty string " })
                 }
                 filter.subcategory = subcategory
             }
             if (tags) {
                 if (!arrayOfStringChecking(tags)) {
-                    return res.status(404).send({ status: false, msg: "tags must be present and have Non empty string " })
+                    return res.status(400).send({ status: false, msg: "tags must be present and have Non empty string " })
                 }
                 filter.tags = tags
             }
             if (category) {
                 if (!arrayOfStringChecking(tags)) {
-                    return res.status(404).send({ status: false, msg: "tags must be present and have Non empty string " })
+                    return res.status(400).send({ status: false, msg: "tags must be present and have Non empty string " })
                 }
                 filter.category = category
             }
             if (body) {
                 if (!arrayOfStringChecking(body)) {
-                    return res.status(404).send({ status: false, msg: "Body must be present and have Non empty string " })
+                    return res.status(400).send({ status: false, msg: "Body must be present and have Non empty string " })
                 }
                 filter.body = body
             }

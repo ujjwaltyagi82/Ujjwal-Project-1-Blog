@@ -18,7 +18,6 @@ const authentication = async function (req, res, next) {
         if (!(decodedtoken)) return res.status(401).send({ status: false, msg: "Invalid Token" })
         req.decodedToken = decodedtoken
         res.setHeader("x-api-key", token)
-
         next()
     }
     catch (err) {
