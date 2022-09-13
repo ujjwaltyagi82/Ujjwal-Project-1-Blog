@@ -37,7 +37,7 @@ const createAuthor = async function (req, res) {
     }
     const duplicateEmail = await AuthorModel.findOne({ email: email })
     if (duplicateEmail) {
-      return res.status(400).send({ status: "false", msg: "email Id already registered ,use another email" })
+      return res.status(400).send({ status: false, msg: "email Id already registered ,use another email" })
     }
     if (!isValidPassword.test(password)) {
       return res.status(400).send({ msg: "Password is not correct, At least a symbol, upper and lower case letters and a number with min 8 and max 16 letters", status: false })
@@ -67,7 +67,6 @@ const loginUser = async function (req, res) {
     if (!isValidPassword.test(password)) {
       return res.status(400).send({ status: false, msg: "password is not correct, it contain at least a symbol, upper and lower case letters and a number with min 6 and max 16 letters" })
     }
-
     let author = await AuthorModel.findOne({ email: userName, password: password });
     if (!author) {
       return res.status(401).send({status: false, msg: "Invalid username or password" })

@@ -12,10 +12,12 @@ const authentication = async function (req, res, next) {
             token = req.headers["x-api-key"]
         }
         if (!(token)) {
-            return res.status(401).send({ status: false, msg: "Token must enter token" })
+            return res.status(401).send({ status: false, msg: "Token must be entered" })
         }
         let decodedtoken = jwt.verify(token, "projectgroup20-key")
-        if (!(decodedtoken)) return res.status(401).send({ status: false, msg: "Invalid Token" })
+        if (!(decodedtoken)){
+            return res.status(401).send({ status: false, msg: "Invalid Token" })
+        } 
         req.decodedToken = decodedtoken
         res.setHeader("x-api-key", token)
         next()

@@ -54,7 +54,7 @@ const createBlog = async function (req, res) {
             return res.status(400).send({ message: "Body must be present and have non empty string" })
         }
         datacreate.body = body
-        if (!arrayOfStringChecking(category)) {
+        if (!!stringChecking(category)) {
             return res.status(400).send({ status: false, message: "Category must be present and have Non empty string " })
         }
         datacreate.category = category
@@ -99,9 +99,8 @@ const getBlogs = async function (req, res) {
         if (Object.keys(bodyData).length == 0) {
             let getData = await BlogModel.find({ isDeleted: false, isPublished: true })
             if (getData.length <= 0) {
-                return res.status(404).send({ status: false, msg: "Data Not Found" })
+                return res.status(200).send({ status: true, count: getData.length, data: getData })
             }
-            return res.status(200).send({ status: true, count: getData.length, data: getData })
         }
         else {
             let { subcategory, category, tags, authorId } = bodyData
@@ -119,7 +118,7 @@ const getBlogs = async function (req, res) {
                 filter.tags = tags
             }
             if (category) {
-                if (!arrayOfStringChecking(tags)) {
+                if (!stringChecking(tags)) {
                     return res.status(404).send({ status: false, msg: "tags must be present and have Non empty string " })
                 }
                 filter.category = category
@@ -177,18 +176,18 @@ const updateBlogs = async function (req, res) {
                     }
                 }
                 if (title) {
-                    if (!StringChecking(title)) {
+                    if (!stringChecking(title)) {
                         return res.status(400).send({ status: false, message: "Title must be Non empty string " })
                     }
                 }
                 if (body) {
-                    if (!StringChecking(body)) {
+                    if (!stringChecking(body)) {
                         return res.status(400).send({ status: false, message: "Body must have Non empty string " })
                     }
                 }
                 let allblogs = await BlogModel.findByIdAndUpdate(
-                    { "_id": blogId },
-                    { "$set": { "title": title, "body": body }, "$addToSet": { "tags": tags, "subcategory": subcategory }, isPublished: true, publishedAt: new Date() },
+                    { _id: blogId },
+                    { $set: { title: title, body: body }, $addToSet: { tags: tags, subcategory: subcategory }, isPublished: true, publishedAt: new Date() },
                     { new: true }
                 )
                 return res.status(200).send({ status: true, message: allblogs })
@@ -251,7 +250,7 @@ const deleteBlogs = async function (req, res) {
                 filter.tags = tags
             }
             if (category) {
-                if (!arrayOfStringChecking(tags)) {
+                if (!stringChecking(tags)) {
                     return res.status(400).send({ status: false, msg: "tags must be present and have Non empty string " })
                 }
                 filter.category = category
