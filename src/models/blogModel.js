@@ -4,24 +4,32 @@ const ObjectId = mongoose.Schema.Types.ObjectId
 const blogSchema = new mongoose.Schema({
     title: {
         type: String,
-        required: true
+        required: 'Blog Title is required',
+        trim: true
     },
     body: {
         type: String,
-        required: true
+        required: 'Blog Body is required',
+        trim: true
     },
     authorId:{
         type: ObjectId,
         ref:'Author',
-        required:true,
+        required: 'Blog Author is required'
     },
-    tags: { type:[String] //["adj","ladkjf"]
+    tags: {
+        type:[String],
+        trim: true
     },
     category: {
         type: String,
-        required: true,
+        required: 'Blog Category is required',
+        trim: true
     },
-    subcatagory: [String],
+    subcategory: {
+        type: [String],
+        trim: true
+    },
     isDeleted: {
         type : Boolean,
         default: false
@@ -30,7 +38,10 @@ const blogSchema = new mongoose.Schema({
         type: Date,
         default: null
     },
-    isPublished:{type:Boolean, default: false},
+    isPublished:{
+        type:Boolean,
+        default: false
+    },
     publishedAt: {
         type: Date,
         default: null

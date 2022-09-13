@@ -39,7 +39,7 @@ const createBlog = async function (req, res) {
             return res.status(400).send({ status: false, msg: "Please enter Blog details" })
         }
         if (!isValidObjectId(authorId)) {
-            return res.status(400).send({ msg: "please enter valid authorId" })
+            return res.status(400).send({status: false, msg: "please enter valid authorId" })
         }
         if (!stringChecking(title) || !stringChecking(body)) {
             return res.status(400).send({ status: false, msg: "title and body must be present and have Non empty string " })
@@ -62,7 +62,7 @@ const createBlog = async function (req, res) {
             return res.status(404).send({ status: false, msg: "Invalid authorId. Author Not Found " })
         }
         let savedData = await BlogModel.create(data)
-        return res.status(201).send({ status: true, data: savedData })
+        return res.status(201).send({ status: true, msg: "New Blog created successfully", data: savedData })
     }
     catch (err) {
         console.log("The error is ==>", err)
@@ -142,13 +142,14 @@ const updateBlogs = async function (req, res) {
             if (Object.keys(data).length === 0) {
                 return res.status(400).send({ status: false, msg: "Please enter required details in request body" })
             } else {
-                let { subcategory, tags, body, title } = data
+                let { subcategory, tags, body, title, category } = data
                 if (subcategory) {
                     if (!arrayOfStringChecking(subcategory)) {
                         return res.status(400).send({ status: false, msg: "subcategory must  have Non empty string " })
                     }
                 }
                 if (tags) {
+                    // if (!Object.prototype.hasOwnProperty.call)
                     if (!arrayOfStringChecking(tags)) {
                         return res.status(400).send({ status: false, msg: "tags must have Non empty string " })
                     }

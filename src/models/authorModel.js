@@ -3,26 +3,29 @@ const mongoose = require('mongoose');
 const authorSchema = new mongoose.Schema({
     fname: {
         type: String,
-        required: true
+        required: 'First Name is required',
+        trim: true
     },
     lname: {
         type: String,
-        required: true
+        required: 'Last Name is required',
+        trim: true
     },
     title: {
         type: String,
-        required: true,
-        enum: ["Mr", "Mrs", "Miss"]
+        enum: ["Mr", "Mrs", "Miss"],
+        required: 'Title is required'
     },
     email: {
         type: String,
         unique: true,
-        trim: true
+        trim: true,
+        required: 'Email address is required'
     },
     password: {
         type: String,
-        required: true
-    },
+        required: 'Password is required'
+    }
 
 }, { timestamps: true });
 

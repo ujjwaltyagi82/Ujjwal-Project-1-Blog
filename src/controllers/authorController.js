@@ -70,7 +70,7 @@ const loginUser = async function (req, res) {
 
     let author = await AuthorModel.findOne({ email: userName, password: password });
     if (!author) {
-      return res.status(400).send({ msg: "Invalid username or password" })
+      return res.status(401).send({status: false, msg: "Invalid username or password" })
     }
     let payload = {
       authorId: author._id.toString(),
@@ -79,7 +79,7 @@ const loginUser = async function (req, res) {
     }
     let token = jwt.sign(payload, "projectgroup20-key");
     res.setHeader("x-api-key", token);
-    return res.status(201).send({ msg: "login successfully", data: token });
+    return res.status(201).send({status: true, msg: "login successfully", data: token });
   }
   catch (err) {
     return res.status(500).send({ msg: "Error", error: err.message })
