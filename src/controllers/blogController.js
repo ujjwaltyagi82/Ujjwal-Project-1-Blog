@@ -25,43 +25,63 @@ const arrayOfStringChecking = function (data) {
         }
     }
 }
+
 //---------------------------------------------------------Blog PostApi-----------------------------------------------------------
+
 const createBlog = async function (req, res) {
     try {
         let data = req.body
-        let title = data.title
-        let body = data.body
-        let authorId = data.authorId
-        let category = data.category
-        let tags = data.tags
-        let subcategory = data.subcategory
+        let loggedInuser = (req.decodedToken.authorId).toString()
+
         if (Object.keys(data).length === 0) {
-            return res.status(400).send({ status: false, msg: "Please enter Blog details" })
+            return res.status(400).send({ status: false, message: "Please enter Blog details" })
         }
-        if (!isValidObjectId(authorId)) {
-            return res.status(400).send({status: false, msg: "please enter valid authorId" })
+        let { title, body, authorId, category, tags, subcategory, isPublished } = data
+        let datacreate = {}
+        if (authorId) {
+            if (!isValidObjectId(authorId)) {
+                return res.status(400).send({ status: false, message: "Please enter valid authorId" })
+            } if (authorId !== loggedInuser) {
+                return res.status(403).send({ staus: false, message: "Person not authoriesed" })
+            }
+            datacreate.authorId = authorId
         }
-        if (!stringChecking(title) || !stringChecking(body)) {
-            return res.status(400).send({ status: false, msg: "title and body must be present and have Non empty string " })
+        if (!StringChecking(title)) {
+            return res.status(400).send({ status: false, message: "Title must be present and have Non empty string " })
         }
+        datacreate.title = title
+        if (!StringChecking(body)) {
+            return res.status(400).send({ message: "Body must be present and have non empty string" })
+        }
+        datacreate.body = body
         if (!arrayOfStringChecking(category)) {
-            return res.status(400).send({ status: false, msg: "category must be present and have Non empty string " })
+            return res.status(400).send({ status: false, message: "Category must be present and have Non empty string " })
         }
+        datacreate.category = category
         if (subcategory) {
             if (!arrayOfStringChecking(subcategory)) {
-                return res.status(400).send({ status: false, msg: "subcategory must be present and have Non empty string " })
+                return res.status(400).send({ status: false, message: "Subcategory must be present and have Non empty string " })
             }
+            datacreate.subcategory = subcategory
         }
+        if (isPublished) {
+            datacreate.isPublished = isPublished
+            datacreate.publishedAt = new Date()
+        }
+
         if (tags) {
             if (!arrayOfStringChecking(tags)) {
-                return res.status(400).send({ status: false, msg: "tags must be present and have Non empty string " })
+                return res.status(400).send({ status: false, message: "Tags must be present and have Non empty string " })
             }
+            datacreate.tags = tags
         }
+
+
         let findid = await AuthorModel.findById(authorId)
         if (!(findid)) {
-            return res.status(404).send({ status: false, msg: "Invalid authorId. Author Not Found " })
+            return res.status(404).send({ status: false, message: "Invalid authorId. Author Not Found " })
         }
-        let savedData = await BlogModel.create(data)
+        let savedData = await BlogModel.create(datacreate)
         return res.status(201).send({ status: true, msg: "New Blog created successfully", data: savedData })
     }
     catch (err) {
@@ -131,45 +151,47 @@ const getBlogs = async function (req, res) {
 const updateBlogs = async function (req, res) {
     try {
         let blogId = req.params.blogId
+        if (!(blogId)){
+            res.status(400).send({ status: false, message: "Please enter blogId" })
+        }
         if (!isValidObjectId(blogId)) {
-            return res.status(400).send({ status: false, msg: "Please enter valid blogId in params" })
+            return res.status(400).send({ status: false, message: "Please enter valid blogId in params" })
         } else {
             let check = await BlogModel.findById(blogId).select({ isDeleted: 1, _id: 0 })
             if (check.isDeleted == true) {
-                return res.status(404).send({ status: false, msg: "Blog not found" })
+                return res.status(404).send({ status: false, message: "Blog not found" })
             }
             let data = req.body
             if (Object.keys(data).length === 0) {
-                return res.status(400).send({ status: false, msg: "Please enter required details in request body" })
+                return res.status(400).send({ status: false, message: "Please enter required details in request body" })
             } else {
-                let { subcategory, tags, body, title, category } = data
+                let { subcategory, tags, body, title } = data
                 if (subcategory) {
                     if (!arrayOfStringChecking(subcategory)) {
-                        return res.status(400).send({ status: false, msg: "subcategory must  have Non empty string " })
+                        return res.status(400).send({ status: false, message: "Subcategory must have Non empty string " })
                     }
                 }
                 if (tags) {
-                    // if (!Object.prototype.hasOwnProperty.call)
                     if (!arrayOfStringChecking(tags)) {
-                        return res.status(400).send({ status: false, msg: "tags must have Non empty string " })
+                        return res.status(400).send({ status: false, message: "Tags must have Non empty string " })
                     }
                 }
                 if (title) {
-                    if (!stringChecking(title)) {
-                        return res.status(400).send({ status: false, msg: "title must be Non empty string " })
+                    if (!StringChecking(title)) {
+                        return res.status(400).send({ status: false, message: "Title must be Non empty string " })
                     }
                 }
                 if (body) {
-                    if (!stringChecking(body)) {
-                        return res.status(400).send({ status: false, msg: "body must have Non empty string " })
+                    if (!StringChecking(body)) {
+                        return res.status(400).send({ status: false, message: "Body must have Non empty string " })
                     }
                 }
-                let allBooks = await BlogModel.findByIdAndUpdate(
-                    { _id: blogId },
-                    [{ $set: data }, { $set: { isPublished: true, publishedAt: Date.now() } }],
+                let allblogs = await BlogModel.findByIdAndUpdate(
+                    { "_id": blogId },
+                    { "$set": { "title": title, "body": body }, "$addToSet": { "tags": tags, "subcategory": subcategory }, isPublished: true, publishedAt: new Date() },
                     { new: true }
                 )
-                return res.status(200).send({ status: true, msg: allBooks })
+                return res.status(200).send({ status: true, message: allblogs })
             }
         }
     } catch (err) {
